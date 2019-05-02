@@ -1,44 +1,24 @@
 // Update with your config settings.
 
 module.exports = {
-
   development: {
     client: 'sqlite3',
+    useNullAsDefault: true,
     connection: {
-      filename: './dev.sqlite3'
-    }
-  },
-
-  staging: {
-    client: 'postgresql',
-    connection: {
-      database: 'my_db',
-      user:     'username',
-      password: 'password'
-    },
-    pool: {
-      min: 2,
-      max: 10
+      filename: './data/cookbook.db3', // the folder will be created when we run the migrations
     },
     migrations: {
-      tableName: 'knex_migrations'
-    }
-  },
-
-  production: {
-    client: 'postgresql',
-    connection: {
-      database: 'my_db',
-      user:     'username',
-      password: 'password'
+      directory: "./data/migrations"
     },
+    seeds: {
+      directory: "./data/seeds"
+    },
+
+    // Gotcha: SQLite does not enforce FKs by default, so need below then we can seed data:
     pool: {
-      min: 2,
-      max: 10
+      afterCreate: (connection, done) => {
+        connection.run('PRAGMA foreign_keys = ON', done);
+      },
     },
-    migrations: {
-      tableName: 'knex_migrations'
-    }
-  }
-
+  },
 };
