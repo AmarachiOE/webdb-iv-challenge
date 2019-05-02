@@ -3,6 +3,7 @@ const db = require("../dbConfig");
 module.exports = {
   getDishes,
   getDish,
+  getDish2,
   addDish
 };
 
@@ -13,14 +14,31 @@ function getDishes() {
 
 // ====== getDish(id) should return the dish with the provided id and include a list of the related recipes.
 function getDish(id) {
+  return db("dishes")
+    .leftJoin("recipes", "recipes.dish_id", "dishes.id")
+    .select(
+      "dishes.name as Dish",
+      "dishes.id",
+      "recipes.name as Recipe",
+      "recipes.instructions"
+    )
+    .where({ "dishes.id": Number(id) });
+
+  //   return db("dishes")
+  //     .select("dishes.name as Dish", "*")
+  //     .where({ "dishes.id": Number(id) })
+  //     .leftJoin("recipes", "dishes.id", "recipes.dish_id");
+}
+
+// ====== getDish2(id) should return the dish without recipes
+function getDish2(id) {
   return db("dishes as d")
-    .join("recipes as r", "r.dish_id", "d.id")
-    .select("d.id", "d.name as Dish", "r.name as Recipe")
-    .where({ id: Number(id) });
+    .where({ id: Number(id) })
+    .first();
 }
 // ====== addDish(id) should add the dish to the database and return the id of the new dish.
 function addDish(dish) {
   return db("dishes")
-  .insert(dish)
-  .then(ids => ({ id: ids[0] }));
+    .insert(dish)
+    .then(ids => ({ id: ids[0] }));
 }
