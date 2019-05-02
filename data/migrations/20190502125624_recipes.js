@@ -13,9 +13,8 @@ exports.up = function(knex, Promise) {
 
     tbl
       .string("name", 255)
-      .notNullable()
-      .unique();
-
+      .notNullable();
+      
     tbl.string("instructions").notNullable();
   });
 };
